@@ -8,6 +8,8 @@ A local-first Canvas 2D starter for paper puppet animation. Rehearse in the brow
 
 受到 [ClaudeAnimationBase](https://github.com/JohnHeibel/ClaudeAnimationBase) 的“动画代码 + 角色约定 + 给 AI 的创作指南”组织方式启发。本项目从一支纸偶 MV 的实际制作流程整理而来，采用 Canvas 2D 图片纸偶，不包含 Clawd、p5.js 或 p5.brush 的实现，也不是上游的官方产品。
 
+[在线排练室](https://chimestone.github.io/PaperPuppetKit/studio/index.html) · [在线镜头示例](https://chimestone.github.io/PaperPuppetKit/examples/demo.html) · [下载 Release](https://github.com/chimestone/PaperPuppetKit/releases/tag/v0.1.0)
+
 ## 立即试用
 
 需要 **Node.js 22 或更新版本**。浏览器排练无需安装 npm 依赖，不调用模型或云端服务。
