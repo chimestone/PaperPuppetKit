@@ -1,0 +1,15 @@
+{
+  "name": "paper-puppet-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local-first paper puppet animation starter: rehearse, flip, record, render and subtitle.",
+  "license": "MIT",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "start": "node scripts/serve.cjs",
+    "render": "node scripts/render.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "test:browser": "node scripts/check-browser.cjs"
+  },
+  "devDependencies": {"puppeteer-core": "25.11.0"}
+}

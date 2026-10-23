@@ -1,0 +1,3 @@
+const fs=require('node:fs');
+function chromePath(){const candidates=[process.env.CHROME_PATH,process.platform==='win32'?'C:/Program Files/Google/Chrome/Application/chrome.exe':null,process.platform==='win32'?'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe':null,process.platform==='darwin'?'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome':null,'/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'].filter(Boolean);const found=candidates.find(p=>fs.existsSync(p));if(!found)throw Error('Chrome not found. Set CHROME_PATH to Chrome/Edge executable.');return found;}
+module.exports={chromePath};

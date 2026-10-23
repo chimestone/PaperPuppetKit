@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>PaperPuppetKit · 示例</title>
+<style>body{background:#252827;color:#f2e7d0;font:16px system-ui;max-width:1100px;margin:30px auto}canvas{width:100%;border-radius:12px}input{width:70%}a{color:#edc98a}button{padding:10px}</style>
+<h1>纸偶、翻面与画面破碎</h1><canvas id="stage" width="1280" height="720"></canvas><p><button id="play">播放 / 暂停</button> <input id="seek" type="range" min="0" max="12" step=".01" value="0"> <a href="../studio/index.html">进入排练室</a></p>
+<script src="../src/motions.js"></script><script src="../src/flips.js"></script><script src="../src/stage.js"></script><script>
+const canvas=document.querySelector('canvas'),g=canvas.getContext('2d'),P=PaperStage,images={};
+window.scene={width:1280,height:720,fps:24,duration:12};
+const cues=[{start:0,end:3,text:'纸片和木棍一起移动'},{start:3,end:5,text:'转到侧边，再换状态'},{start:5,end:7.5,text:'内容画在右页，展开后本子静止'},{start:7.5,end:9,text:'旧画面碎开，露出新画面'},{start:9,end:12,text:'让你自己的角色登上纸偶舞台'}];
+function background(ctx,color='#d8bd93'){ctx.fillStyle=color;ctx.fillRect(0,0,1280,720);ctx.fillStyle='#b79369';ctx.fillRect(0,570,1280,150);for(let i=0;i<70;i++){ctx.strokeStyle='#94755225';ctx.beginPath();ctx.moveTo(i*43%1280,i*97%720);ctx.lineTo(i*43%1280+28,i*97%720+2);ctx.stroke();}}
+function bookFrame(ctx,t){background(ctx);P.notebook(ctx,{x:640,y:330,width:660,open:true,drawRight:(c,w,h)=>{c.strokeStyle='#b56747';c.lineWidth=5;c.beginPath();c.arc(0,20,65,Math.PI,0);c.stroke();c.beginPath();c.moveTo(-100,20);c.lineTo(100,20);c.stroke();for(let i=0;i<5;i++){const a=Math.PI+i*Math.PI/4;c.beginPath();c.moveTo(Math.cos(a)*80,20+Math.sin(a)*80);c.lineTo(Math.cos(a)*100,20+Math.sin(a)*100);c.stroke();}}});}
+function smileFrame(ctx){background(ctx,'#b8ccbb');P.puppet(ctx,images['boy-happy'],{x:470,y:622,scale:.75,angle:-5});P.puppet(ctx,images['girl-happy'],{x:820,y:622,scale:.75,angle:5});}
+function frameSurface(draw){const c=document.createElement('canvas');c.width=1280;c.height=720;draw(c.getContext('2d'));return c;}
+let oldFrame,newFrame;
+window.renderAt=t=>{t=Math.min(12,Math.max(0,t));background(g);
+ if(t<5){for(const [i,id]of ['boy','girl'].entries()){const base={x:i?870:290,y:610,scale:.7,angle:0,expression:'neutral'},pose=PuppetMotions.pose(base,i?'left':'right',Math.min(t/3,1),1,140),flip=PuppetFlips.pose('neutral','happy',P.clamp((t-3)/.8));P.puppet(g,images[id+'-'+(t<3?'neutral':flip.shownExpression)],{...pose,flip:t<3?1:flip.flipWidth});}}
+ else if(t<7.5)bookFrame(g,t);
+ else if(t<9)P.shatter(g,oldFrame,newFrame,(t-7.5)/1.5);
+ else smileFrame(g);
+ g.fillStyle='#493c30';g.font='bold 28px sans-serif';g.textAlign='left';g.fillText('PaperPuppetKit',40,50);P.caption(g,cues,t);
+ document.getElementById('seek').value=t;
+};
+window.ready=Promise.all(['boy','girl'].flatMap(id=>['neutral','happy'].map(async ex=>{const im=new Image();im.src='../assets/'+id+'-'+ex+'.svg';await im.decode();images[id+'-'+ex]=im;}))).then(()=>{oldFrame=frameSurface(c=>bookFrame(c,7.5));newFrame=frameSurface(smileFrame);renderAt(0);});
+let playing=false,start=0,time=0;document.getElementById('play').onclick=()=>{playing=!playing;start=performance.now()-time*1000;};document.getElementById('seek').oninput=e=>{playing=false;time=+e.target.value;renderAt(time);};function tick(now){if(playing&&oldFrame){time=(now-start)/1000;if(time>12){time=0;start=now;}renderAt(time);}requestAnimationFrame(tick);}requestAnimationFrame(tick);
+</script></html>
